@@ -97,9 +97,9 @@ func (s *NotificationService) Notify(ctx context.Context, userID string, rec Not
 	return nil
 }
 
-// dispatchPush preserves caller context values but detaches cancellation so
-// request completion cannot interrupt delivery. Push has its own timeout,
-// and any panic is recovered.
+// dispatchPush fires the actual Expo call on a context detached from the
+// request's cancellation (the push must outlive the request), recovering any
+// panic as CosignHandler.notifyQueue does.
 func (s *NotificationService) dispatchPush(ctx context.Context, tokens []string, title, body, notifType, notificationID string) {
 	if len(tokens) == 0 {
 		return
